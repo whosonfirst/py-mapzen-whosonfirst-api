@@ -28,7 +28,7 @@ setup(
         'flamework.api',
         ],
     dependency_links=[
-        'https://github.com/cooperhewitt/py-flamework-api/tarball/master#egg=flamework-api-0.3',
+        'https://github.com/cooperhewitt/py-flamework-api/tarball/master#egg=flamework-api-0.41',
         ],
     packages=packages,
     scripts=[
