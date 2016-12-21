@@ -23,12 +23,12 @@ setup(
     version=version,
     description='',
     author='Mapzen',
-    url='https://github.com/cooperhewitt/py-mapzen-whosonfirst-api',
+    url='https://github.com/whosonfirst/py-mapzen-whosonfirst-api',
     install_requires=[
         'flamework.api',
         ],
     dependency_links=[
-        'https://github.com/cooperhewitt/py-flamework-api/tarball/master#egg=flamework-api-0.41',
+        'https://github.com/whosonfirst/py-flamework-api/tarball/master#egg=flamework-api-0.41',
         ],
     packages=packages,
     scripts=[
