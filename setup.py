@@ -24,11 +24,6 @@ setup(
     description='',
     author='Mapzen',
     url='https://github.com/whosonfirst/py-mapzen-whosonfirst-api',
-    install_requires=[
-        'flamework.api',
-        ],
-    dependency_links=[
-        ],
     packages=packages,
     scripts=[
         ],
