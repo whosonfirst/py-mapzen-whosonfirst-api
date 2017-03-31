@@ -1,5 +1,7 @@
 # py-mapzen-whosonfirst-api
 
+Python package for working with the Who's On First API.
+
 ## Install
 
 ```
@@ -14,12 +16,11 @@ sudo pip install -r requirements.txt .
 import mapzen.whosonfirst.api.client
 
 api = mapzen.whosonfirst.api.client.Mapzen("mapzen-XXXXXXX")
+print api.execute_method("api.spec.formats", {})
 
-method = "whosonfirst.places.getInfo"
-args = { "id": 420780703 }
-    
-rsp = api.execute_method(method, args)
-print rsp
+# prints:
+# {u'default_format': u'json', u'stat': u'ok', u'formats': [u'json', u'csv', u'meta']}
+```
 
 ### Fancy
 
