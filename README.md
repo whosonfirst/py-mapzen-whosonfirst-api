@@ -59,9 +59,6 @@ args = {
 	"per_page": 5,
 }
 
-pages = None
-page = 1
-
 writer = None
 
 while True:    
@@ -123,7 +120,7 @@ while True:
 	tmp = urlparse.parse_qs(next_query)
 
 	for k, v in tmp.items():
-		kwargs[k] = v[0]
+		args[k] = v[0]
 ```
 
 ## See also
