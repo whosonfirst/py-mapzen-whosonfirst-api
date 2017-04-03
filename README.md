@@ -42,10 +42,11 @@ rsp = api.execute_method_paginated(method, args, cb)
 
 ### Detailed
 
-_Don't use this example. It is out of date..._
+_This is basically what's going on under the hood in the `execute_method_paginated` method._
 
 ```
 import mapzen.whosonfirst.api.client
+import parse
 
 api = mapzen.whosonfirst.api.client.Mapzen("mapzen-XXXXXXX")
 
@@ -62,66 +63,67 @@ pages = None
 page = 1
 
 writer = None
-    
-while not pages or page <= pages:
+
+while True:    
 
 	rsp = api.execute_method(method, args)
 
 	if rsp.get("stat", None) != "ok":
 		logging.error("Failed to return ok for '%s'" % args)
 		sys.exit(1)
-
-		if not pages:
-			pages = rsp.get("pages", None)
-
-		if not pages:
-			logging.error("Failed to determine page count, nothing good can come of this...")
-			sys.exit(1)
-                
-		for row in rsp["places"]:
+                          
+	for row in rsp["places"]:
         
-			neighbourhoods = []
-			localities = []
-			counties = []
-			regions = []
+		neighbourhoods = []
+		localities = []
+		counties = []
+		regions = []
         
-		for h in row["wof:hierarchy"]:
+	for h in row["wof:hierarchy"]:
             
-			neighbourhoods.append(str(h.get("neighbourhood_id", -1)))
-			localities.append(str(h.get("locality_id", -1)))
-			counties.append(str(h.get("county_id", -1)))
-			regions.append(str(h.get("region_id", -1)))
+		neighbourhoods.append(str(h.get("neighbourhood_id", -1)))
+		localities.append(str(h.get("locality_id", -1)))
+		counties.append(str(h.get("county_id", -1)))
+		regions.append(str(h.get("region_id", -1)))
 
-			repo = row["wof:repo"].split("-")
-			state = repo[-1]
-			state = state.upper()
+		repo = row["wof:repo"].split("-")
+		state = repo[-1]
+		state = state.upper()
             
-			out = {
-				"wof:id": row["wof:id"],
-				"wof:repo": row["wof:repo"],
-				"geom:latitude": row["geom:latitude"],
-				"geom:longitude": row["geom:longitude"],
-				"addr:full": row["addr:full"],
-				"addr:housenumber": row["addr:housenumber"],
-				"addr:street": row["addr:street"],
-				"addr:postcode": row["addr:postcode"],
-				"wof:neightbourhood_id": ";".join(neighbourhoods),
-				"wof:locality_id": ";".join(localities),
-				"wof:county_id": ";".join(counties),
-				"wof:region_id": ";".join(regions),
-				"wof:state": state
-			}
+		out = {
+			"wof:id": row["wof:id"],
+			"wof:repo": row["wof:repo"],
+			"geom:latitude": row["geom:latitude"],
+			"geom:longitude": row["geom:longitude"],
+			"addr:full": row["addr:full"],
+			"addr:housenumber": row["addr:housenumber"],
+			"addr:street": row["addr:street"],
+			"addr:postcode": row["addr:postcode"],
+			"wof:neightbourhood_id": ";".join(neighbourhoods),
+			"wof:locality_id": ";".join(localities),
+			"wof:county_id": ";".join(counties),
+			"wof:region_id": ";".join(regions),
+			"wof:state": state
+		}
         
-			if not writer:
-				fieldnames = out.keys()
-				fieldnames.sort()
-                
-				writer = csv.DictWriter(sys.stdout, fieldnames=fieldnames)
-				writer.writeheader()
+		if not writer:
+			fieldnames = out.keys()
+			fieldnames.sort()
+               
+			writer = csv.DictWriter(sys.stdout, fieldnames=fieldnames)
+			writer.writeheader()
             
-			writer.writerow(out)
+		writer.writerow(out)
 
-		page += 1
+	next_query = rsp.get('next_query', None)
+
+	if not next_query:
+		break
+            
+	tmp = urlparse.parse_qs(next_query)
+
+	for k, v in tmp.items():
+		kwargs[k] = v[0]
 ```
 
 ## See also
