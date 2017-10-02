@@ -4,16 +4,17 @@ import urllib
 import httplib
 import logging
 import json
+import requests
 
 class Mapzen(flamework.api.client.OAuth2):
 
     def __init__(self, api_key, **kwargs):
         
         if not kwargs.get('hostname', None):
-            kwargs['hostname'] = 'whosonfirst-api.mapzen.com'
+            kwargs['hostname'] = 'places.mapzen.com'
 
         if not kwargs.get('endpoint', None):
-            kwargs['endpoint'] = '/'
+            kwargs['endpoint'] = '/v1'
 
         self.api_key = api_key
 
@@ -32,16 +33,14 @@ class Mapzen(flamework.api.client.OAuth2):
         kwargs['method'] = method
         self.set_auth(kwargs)
 
-        url = self.endpoint
+        url = "https://%s%s" % (self.hostname, self.endpoint)
         logging.debug("calling %s" % url)
 
-        url = url + "?" + urllib.urlencode(kwargs)
+        rsp = requests.get(url, params=kwargs)
 
-        conn = httplib.HTTPSConnection(self.hostname)
-        conn.request('GET', url)
+        # TO DO CHECK STATUS HERE...
 
-        rsp = conn.getresponse()
-        body = rsp.read()
+        body = rsp.content
 
         logging.debug("response is %s" % body)
 
